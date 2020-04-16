@@ -4,7 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
 
@@ -19,53 +22,45 @@ import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView result;
+    private EditText editLogin;
+    private EditText editPassword;
+    private final String BASIC_URL = "https://api.github.com/";
+    private final String USERS = "users/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        result=findViewById(R.id.result);
-//        OkHttpClient client= new OkHttpClient();
-        String credentials = Credentials.basic("Islimoff", "Academyshag2017");
-        OkHttpClient client = new OkHttpClient.Builder()
-                .addInterceptor(new BasicAuthInterceptor("Islimoff", "Academyshag2017"))
-                .build();
-        RequestBody formBody = new FormBody.Builder()
-                .add("username", "Islimoff")
-                .add("password", "Academyshag2017")
-                .build();
+        editLogin = findViewById(R.id.edit_login);
+        editPassword = findViewById(R.id.edit_password);
+    }
 
+    public void sendAuth(View view) {
+        OkHttpClient client = new OkHttpClient();
+        String login = editLogin.getText().toString();
+        String password = editPassword.getText().toString();
         Request request = new Request.Builder()
-                .url("https://api.github.com" + "/users")
-                .post(formBody)
+                .url(BASIC_URL + USERS + login)
+                .addHeader("Authorization", Credentials.basic(login, password))
                 .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
 
-        Call call = client.newCall(request);
-        try {
-            Response response = call.execute();
-            Log.e("ответ", String.valueOf(response.code()));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-//        client.newCall(request).enqueue(new Callback() {
-//            @Override
-//            public void onFailure(Call call, IOException e) {
-//                e.printStackTrace();
-//            }
-//
-//            @Override
-//            public void onResponse(Call call, Response response) throws IOException {
-//                if (response.isSuccessful()){
-//                    final String strResponse=response.body().string();
-//                    MainActivity.this.runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            result.setText(strResponse);
-//                        }
-//                    });
-//                }
-//            }
-//        });
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    final String strResponse = response.body().string();
+                    MainActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainActivity.this, strResponse, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        });
     }
 }
