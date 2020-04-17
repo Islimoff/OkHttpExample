@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.method.PasswordTransformationMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +37,7 @@ public class AuthFragment extends Fragment {
         View view = inflater.inflate(R.layout.activity_main, container, false);
         editLogin = view.findViewById(R.id.edit_login);
         editPassword = view.findViewById(R.id.edit_password);
+        editPassword.setTransformationMethod(new PasswordTransformationMethod());
         Button sendButton=view.findViewById(R.id.button);
         sendButton.setOnClickListener(this::sendAuth);
         return view;
