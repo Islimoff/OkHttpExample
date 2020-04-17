@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".AuthFragment">
 
     <EditText
         android:id="@+id/edit_login"
@@ -40,7 +40,6 @@
         android:text="Send"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_password"
-        android:onClick="sendAuth"/>
+        app:layout_constraintTop_toBottomOf="@+id/edit_password" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

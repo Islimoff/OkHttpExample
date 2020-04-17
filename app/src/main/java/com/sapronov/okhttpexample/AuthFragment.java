@@ -1,12 +1,17 @@
 package com.sapronov.okhttpexample;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -14,25 +19,26 @@ import java.io.IOException;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Credentials;
-import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class AuthFragment extends Fragment {
 
     private EditText editLogin;
     private EditText editPassword;
     private final String BASIC_URL = "https://api.github.com/";
     private final String USERS = "users/";
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        editLogin = findViewById(R.id.edit_login);
-        editPassword = findViewById(R.id.edit_password);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle saveInstanceState) {
+        View view = inflater.inflate(R.layout.activity_main, container, false);
+        editLogin = view.findViewById(R.id.edit_login);
+        editPassword = view.findViewById(R.id.edit_password);
+        Button sendButton=view.findViewById(R.id.button);
+        sendButton.setOnClickListener(this::sendAuth);
+        return view;
     }
 
     public void sendAuth(View view) {
@@ -53,10 +59,13 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
                     final String strResponse = response.body().string();
-                    MainActivity.this.runOnUiThread(new Runnable() {
+                   getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(MainActivity.this, strResponse, Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(getContext(), ResultActivity.class);
+                            intent.putExtra("response",strResponse);
+                            startActivity(intent);
+                            Toast.makeText(getActivity(), strResponse, Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
